@@ -1,6 +1,3 @@
-# TwitterBotDetection
-
-```
 TwitterBotDetection
 ├── README.md
 ├── STRUCTURE.md
@@ -23,4 +20,5 @@ TwitterBotDetection
 │   └── eda.ipynb
 └── src/
     └── visualizations.py
-```
+
+7 directories, 19 files
