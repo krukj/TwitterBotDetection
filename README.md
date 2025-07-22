@@ -1,5 +1,6 @@
 # TwitterBotDetection
 
+##  Project Structure
 ```
 TwitterBotDetection
 ├── README.md
@@ -22,5 +23,6 @@ TwitterBotDetection
 ├── notebooks/
 │   └── eda.ipynb
 └── src/
+    ├── preprocessing.py
     └── visualizations.py
 ```
