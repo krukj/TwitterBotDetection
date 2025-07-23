@@ -21,110 +21,37 @@ EMOJI_PATTERN = re.compile(
 )
 
 
-def add_new_cols(df: pd.DataFrame) -> pd.DataFrame:
-    """Adds new columns to DataFrame: avg_word_count, avg_character_count, avg_hashtag_count,
-    avg_mention_count, avg_positive_word_count, avg_negative_word_count
-
-    Args:
-        df (pd.DataFrame): A pandas DataFrame containing column 'tweet'.
-
-    Returns:
-        pd.DataFrame: A pandas DataFrame with new columns.
-    """
-    df_copy = df.copy()
-
-    # average word count
-    df_copy["avg_word_count"] = df_copy["tweet"].apply(
-        lambda tweet_list: (
-            sum(len(tweet.split()) for tweet in tweet_list) / len(tweet_list)
-            if isinstance(tweet_list, list) and len(tweet_list) > 0
-            else 0
-        )
-    )
-
-    # average character count
-    df_copy["avg_character_count"] = df_copy["tweet"].apply(
-        lambda tweet_list: (
-            sum(len(tweet) for tweet in tweet_list) / len(tweet_list)
-            if isinstance(tweet_list, list) and len(tweet_list) > 0
-            else 0
-        )
-    )
-
-    # average hashtag count
-    df_copy["avg_hashtag_count"] = df_copy["tweet"].apply(
-        lambda tweet_list: (
-            sum(tweet.split().count("#") for tweet in tweet_list) / len(tweet_list)
-            if isinstance(tweet_list, list) and len(tweet_list) > 0
-            else 0
-        )
-    )
-
-    # average @ count
-    df_copy["avg_mention_count"] = df_copy["tweet"].apply(
-        lambda tweet_list: (
-            sum(tweet.split().count("@") for tweet in tweet_list) / len(tweet_list)
-            if isinstance(tweet_list, list) and len(tweet_list) > 0
-            else 0
-        )
-    )
-
-    # average links count
-    df_copy["avg_link_count"] = df_copy["tweet"].apply(
-        lambda tweet_list: (
-            sum(tweet.split().count("https") for tweet in tweet_list) / len(tweet_list)
-            if isinstance(tweet_list, list) and len(tweet_list) > 0
-            else 0
-        )
-    )
-
-    # average emoji count
-    df_copy["avg_emoji_count"] = df_copy["tweet"].apply(
-        lambda tweet_list: (
-            sum(len(EMOJI_PATTERN.findall(tweet)) for tweet in tweet_list)
-            / len(tweet_list)
-            if isinstance(tweet_list, list) and len(tweet_list) > 0
-            else 0
-        )
-    )
-
-    # average positive words count
-    df_copy["avg_positive_word_count"] = df_copy["tweet"].apply(
-        lambda tweet_list: (
-            sum(
-                sum(1 for w in tweet.split() if w.lower() in POSITIVE_WORDS)
-                for tweet in tweet_list
-            )
-            / len(tweet_list)
-            if isinstance(tweet_list, list) and len(tweet_list) > 0
-            else 0
-        )
-    )
-
-    # average negative words count
-    df_copy["avg_negative_word_count"] = df_copy["tweet"].apply(
-        lambda tweet_list: (
-            sum(
-                sum(1 for w in tweet.split() if w.lower() in NEGATIVE_WORDS)
-                for tweet in tweet_list
-            )
-            / len(tweet_list)
-            if isinstance(tweet_list, list) and len(tweet_list) > 0
-            else 0
-        )
-    )
-    return df_copy
-
-
 class TweetFeatureExtractor(BaseEstimator, TransformerMixin):
+    """
+    A class for extracting features from tweets.
+
+    """
+
     def __init__(self) -> None:
         pass
 
     def fit(self, X, y=None) -> "TweetFeatureExtractor":
         return self
 
-    def transform(self, X):
+    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
+        """
+        Adds new columns ('avg_word_count', 'avg_character_count', 'avg_hashtag_count', 'avg_mention_count',
+        'avg_link_count', 'avg_emoji_count', 'avg_positive_word_count', 'avg_negative_word_count') to X based on column 'tweet'.
+
+        Args:
+            X (pd.DataFrame): A pandas DataFrame containing column 'tweet'.
+
+        Returns:
+            pd.DataFrame: A modified X with new added columns.
+        """
         X_copy = X.copy()
+        X_copy["tweets_joined"] = X_copy["tweet"].apply(
+            lambda tweet_list: (
+                " [SEP] ".join(str(t) for t in tweet_list)
+                if isinstance(tweet_list, list)
+                else ""
+            )
+        )
 
         # average word count
         X_copy["avg_word_count"] = X_copy["tweet"].apply(
@@ -210,13 +137,26 @@ class TweetFeatureExtractor(BaseEstimator, TransformerMixin):
 
 
 class TweetProcessor(BaseEstimator, TransformerMixin):
+    """
+    A class for preprocessing tweets.
+    """
+
     def __init__(self) -> None:
         pass
 
-    def fit(self, X, y=None) -> "TweetProcessor":
+    def fit(self, X: pd.DataFrame, y=None) -> "TweetProcessor":
         return self
 
-    def transform(self, X) -> pd.DataFrame:
+    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
+        """
+        Preprocesses tweets (changes to lowercase, removes links, emojis, hashtag symbol, removes punctuation marks etc.).
+
+        Args:
+            X (pd.DataFrame): A pandas DataFrame containing column 'tweets_joined'.
+
+        Returns:
+            pd.DataFrame: A pandas DataFrame with preprocessed tweets.
+        """
         X_copy = X.copy()
         # lowercase
         X_copy["tweets_joined"] = X_copy["tweets_joined"].str.lower()
