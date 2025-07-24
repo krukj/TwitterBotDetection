@@ -152,12 +152,20 @@ class TweetProcessor(BaseEstimator, TransformerMixin):
         Preprocesses tweets (changes to lowercase, removes links, emojis, hashtag symbol, removes punctuation marks etc.).
 
         Args:
-            X (pd.DataFrame): A pandas DataFrame containing column 'tweets_joined'.
+            X (pd.DataFrame): A pandas DataFrame containing column 'tweet'.
 
         Returns:
             pd.DataFrame: A pandas DataFrame with preprocessed tweets.
         """
         X_copy = X.copy()
+
+        # join user's tweets
+        X_copy["tweets_joined"] = X_copy["tweet"].apply(
+            lambda tweet_list: (
+                " [SEP] ".join(tweet_list) if isinstance(tweet_list, list) else " "
+            )
+        )
+
         # lowercase
         X_copy["tweets_joined"] = X_copy["tweets_joined"].str.lower()
 
@@ -193,4 +201,4 @@ class TweetProcessor(BaseEstimator, TransformerMixin):
             )
         )
 
-        return X_copy["tweets_joined"].tolist()
+        return X_copy
