@@ -205,3 +205,41 @@ def plot_most_common_words_per_label(df: pd.DataFrame, label: str, n: int = 10) 
     plt.ylabel("Frequency", fontsize=LABEL_FONTSIZE)
     plt.xticks(rotation=ROTATION, fontsize=TICKS_FONTSIZE)
     plt.show()
+
+def plot_column_vs_label(df: pd.DataFrame, column: str) -> None:
+    """
+    Plots the distribution of bot and human labels within any boolean column (e.g., verified, default_profile).
+
+    Args:
+        df (pd.DataFrame): A pandas DataFrame containing the column and 'label'.
+        column (str): Name of the boolean column to group by.
+    """
+
+    label_map = {0: 'Human', 1: 'Bot'}
+    value_map = {True: 'Yes', False: 'No'}
+
+    df_copy = df.copy()
+    df_copy['label_text'] = df_copy['label'].map(label_map)
+
+    df_copy[column] = df_copy[column].map({'True ': True, 'False ': False})
+    df_copy['column_text'] = df_copy[column].map(value_map)
+
+    _, ax = plt.subplots(figsize=FIGSIZE)
+    sns.histplot(
+        data=df_copy,
+        x='column_text',
+        hue='label_text',
+        multiple='fill',
+        shrink=0.8,
+        palette=PALETTE,
+        edgecolor='black',
+        alpha=ALPHA,
+        ax=ax
+    )
+
+    ax.set_ylabel('Proportion')
+    ax.set_xlabel(column.replace('_', ' ').capitalize())
+    ax.set_title(f'Label Distribution by {column.replace("_", " ").capitalize()}', fontsize=TITLE_FONTSIZE)
+    plt.xticks(fontsize=TICKS_FONTSIZE)
+    plt.tight_layout()
+    plt.show()
