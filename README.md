@@ -5,24 +5,29 @@
 TwitterBotDetection
 ├── README.md
 ├── STRUCTURE.md
-├── data/
-│   └── TwiBot20/
-│       ├── graphs/
+├── data
+│   └── TwiBot20
+│       ├── graphs
 │       │   ├── edge_new.json
 │       │   ├── node_new.json
 │       │   ├── label_new.json
 │       │   └── split_new.json
-│       └── tweets/
+│       └── tweets
 │           ├── dev.json
+│           ├── support.json
+│           ├── test.json
 │           ├── LICENSE
 │           ├── README.txt
 │           ├── TwiBot-20 Seed Users.txt
-│           ├── support.json
-│           ├── test.json
 │           └── train.json
-├── notebooks/
-│   └── eda.ipynb
-└── src/
+├── notebooks
+│   ├── eda.ipynb
+│   ├── iris_agent.ipynb
+│   └── preprocessing.ipynb
+├── requirements.txt
+├── results
+│   └── stats.csv
+└── src
     ├── preprocessing.py
     └── visualizations.py
 ```

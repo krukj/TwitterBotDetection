@@ -10,3 +10,6 @@ data/Twibot20/tweets/*
 
 # do not ignore the .gitkeep files
 !**/.gitkeep
+
+# ignore .env file
+.env
